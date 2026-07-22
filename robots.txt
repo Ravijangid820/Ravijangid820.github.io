@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ravi-mk42.me/sitemap.xml
