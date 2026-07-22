@@ -14,7 +14,7 @@ Open `index.html` directly in a browser, or push to `main` and let GitHub Pages 
 
 ## Public links
 
-- Portfolio: https://ravi-mk42.me
+- Portfolio: https://ravijangid820.github.io/portfolio
 - GitHub: https://github.com/Ravijangid820
 - LinkedIn: https://www.linkedin.com/in/ravi-jangid-mk42/
 - Resume: https://ravi-mk42.me/Ravi_Jangid_Resume_2page_final.pdf
