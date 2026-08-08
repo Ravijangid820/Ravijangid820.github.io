@@ -88,9 +88,11 @@ a {
   min-height: calc(100vh - 120px);
 }
 
+/* Only the surfaces that actually paint a background need clipping. `.split-copy`
+   is a bare text block with no padding, so a radius here clips the first
+   character of the eyebrow against the corner curve. */
 .hero-copy,
-.hero-panel,
-.split-copy {
+.hero-panel {
   position: relative;
   overflow: hidden;
   border-radius: 24px;
