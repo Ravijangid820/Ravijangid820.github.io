@@ -297,6 +297,9 @@ h1 {
 }
 
 .split-copy {
+  /* Positioned so it paints above the decorative `.split::before` overlay.
+     It deliberately has no radius or overflow — it is a bare text block. */
+  position: relative;
   display: grid;
   gap: 12px;
 }
