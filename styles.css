@@ -8,6 +8,13 @@
   --muted: #94a3b8;
   --accent: #38bdf8;
   --accent-soft: rgba(56, 189, 248, 0.14);
+
+  /* Radius scale. Three steps plus full — any value outside these reads as
+     unplanned rather than hierarchical. Nested surfaces step down one level:
+     card contains panel, panel contains control. */
+  --r-control: 8px;
+  --r-panel: 16px;
+  --r-card: 24px;
 }
 
 * {
@@ -27,6 +34,19 @@ body {
 		radial-gradient(circle at top left, rgba(59, 130, 246, 0.16), transparent 28%),
 		radial-gradient(circle at 80% 10%, rgba(14, 165, 233, 0.12), transparent 24%),
 		linear-gradient(180deg, #050608 0%, #09090b 48%, #070708 100%);
+}
+
+/* Large radial gradients over near-black band visibly on 8-bit displays.
+   A few percent of noise breaks up the steps and adds a little tactility.
+   Sits above everything but is imperceptible over text at this opacity. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.038;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 a {
@@ -78,7 +98,7 @@ a {
   border: 1px solid var(--line);
   background: linear-gradient(180deg, rgba(7, 10, 18, 0.88), rgba(6, 8, 12, 0.88));
   backdrop-filter: blur(18px);
-  border-radius: 28px;
+  border-radius: var(--r-card);
 }
 
 .hero-card {
@@ -95,7 +115,7 @@ a {
 .hero-panel {
   position: relative;
   overflow: hidden;
-  border-radius: 24px;
+  border-radius: var(--r-panel);
 }
 
 .hero-copy {
@@ -155,7 +175,7 @@ h1 {
   gap: 8px;
   padding: 10px 16px;
   border: 1px solid rgba(148, 163, 184, 0.24);
-  border-radius: 0.375rem;
+  border-radius: var(--r-control);
   background: rgba(255, 255, 255, 0.03);
   color: var(--text);
   font-weight: 500;
@@ -206,7 +226,7 @@ h1 {
 
 .panel-card {
   padding: 24px;
-  border-radius: 22px;
+  border-radius: var(--r-panel);
   background: linear-gradient(180deg, rgba(15, 23, 42, 0.86), rgba(3, 7, 18, 0.86));
   border: 1px solid rgba(148, 163, 184, 0.16);
 }
@@ -347,12 +367,72 @@ h1 {
     gap: 16px;
     flex-wrap: wrap;
   }
+}
 
-  .hero-copy,
-  .hero-panel,
-  .card,
-  .split,
-  .footer-cta {
-    border-radius: 22px;
+/* ---------- entrance motion ----------------------------------------------
+   The hero is above the fold, so it animates on load with a short stagger.
+   Everything below waits for .is-visible, set by the observer in index.html.
+   The `.js` guard means content stays visible if the script never runs. */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.js .hero-copy > *,
+.js .hero-panel > * {
+  animation: rise 620ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.js .hero-copy > *:nth-child(1) { animation-delay: 40ms }
+.js .hero-copy > *:nth-child(2) { animation-delay: 110ms }
+.js .hero-copy > *:nth-child(3) { animation-delay: 180ms }
+.js .hero-copy > *:nth-child(4) { animation-delay: 250ms }
+.js .hero-panel > *:nth-child(1) { animation-delay: 240ms }
+.js .hero-panel > *:nth-child(2) { animation-delay: 310ms }
+
+.js .reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 700ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 700ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.js .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Stagger the cards within a revealed row. */
+.js .reveal.is-visible .card:nth-child(2) { transition-delay: 80ms }
+.js .reveal.is-visible .card:nth-child(3) { transition-delay: 160ms }
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .js .hero-copy > *,
+  .js .hero-panel > * {
+    animation: none;
+  }
+
+  .js .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }
